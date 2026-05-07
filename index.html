@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도어컨트롤러 매뉴얼 v3.5</title>
+    <style>
+        :root {
+            --primary: #28a745;
+            --bg: #f8f9fa;
+            --border: #dee2e6;
+            --text: #343a40;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: #fff;
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        #searchInput {
+            width: 300px;
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 380px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        #questionList li {
+            padding: 18px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        #questionList li.active {
+            background: #e8f5e9;
+            border-left: 6px solid var(--primary);
+            font-weight: bold;
+            color: #1b5e20;
+        }
+
+        .content {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .label {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .label.symptom {
+            background: #6c757d;
+        }
+
+        .label.step {
+            background: var(--primary);
+        }
+
+        .image-panel {
+            width: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #eee;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .slide-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            z-index: 10;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-prev {
+            left: 15px;
+        }
+
+        .btn-next {
+            right: 15px;
+        }
+
+        .img-counter {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #444;
+            height: 1.2rem;
+            display: none;
+        }
+
+        .btn-detail {
+            width: 100%;
+            padding: 15px;
+            background: #343a40;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #modal img {
+            max-width: 95%;
+            max-height: 85%;
+            object-fit: contain;
+        }
+
+        .btn-close {
+            margin-top: 20px;
+            padding: 12px 60px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>DOOR CONTROLLER A/S</h1>
+        <input type="text" id="searchInput" placeholder="검색어 입력...">
+    </header>
+
+    <main>
+        <aside class="sidebar">
+            <ul id="questionList"></ul>
+        </aside>
+        <section class="content">
+            <div id="emptyState" style="text-align:center; padding-top:150px; color:#999;">질문을 선택해 주세요.</div>
+            <div id="detailView" class="hidden">
+                <h2 id="title" style="margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:10px;"></h2>
+                <div style="margin-bottom:20px;"><span class="label symptom">발생 증상</span>
+                    <p id="symptomText"></p>
+                </div>
+                <div><span class="label step">조치 방법</span>
+                    <div id="stepContainer"></div>
+                </div>
+            </div>
+        </section>
+        <aside class="image-panel">
+            <div class="slider-container">
+                <button id="prevBtn" class="slide-btn btn-prev" onclick="changeSlide(-1)">◀</button>
+                <div class="img-box" id="imgBox"></div>
+                <button id="nextBtn" class="slide-btn btn-next" onclick="changeSlide(1)">▶</button>
+            </div>
+            <div id="imgCounter" class="img-counter"></div>
+            <button id="detailBtn" class="btn-detail hidden" onclick="openModal()">이미지 크게 보기</button>
+        </aside>
+    </main>
+
+    <div id="modal" onclick="closeModal()">
+        <img id="modalImg" src="" onclick="event.stopPropagation()">
+        <button class="btn-close" onclick="closeModal()">닫기 (ESC)</button>
+    </div>
+
+    <script>
+        // 말씀하신 Q2, Q4, Q7, Q9의 이미지 배열을 1개로 수정했습니다.
+        const manualData = [
+            { id: "q1", title: "Q1. 도어폭 측정 방법", symptom: "도어 닫힘 상태에서 측정(CLS 점등)", steps: ["MODE 두번 -> CALI 이동", "ENTER -> 도어 열리며 숫자 증가", "완료 후 HAND 대기"], imgs: ["images/q1.png"] },
+            { id: "q2", title: "Q2. ER-14번 발생", symptom: "엔코더 역방향", steps: ["SW1 스위치 반대로 전환", "전원 재시작 필수"], imgs: ["images/q2.png"] }, // 1장으로 수정
+            { id: "q3", title: "Q3. 도어 안 움직임", symptom: "CLS LED 미점등", steps: ["센서 위치 및 결선 확인", "모터 상 확인"], imgs: ["images/q3.png", "images/q3_2.png", "images/q3_3.png", "images/q3_4.png"] },
+            { id: "q4", title: "Q4. 도어폭 측정 안됨 (ER-11)", symptom: "엔코더 신호 인식 불량", steps: ["렌치 볼트 조임 확인", "엔코더 부품 교체 검토"], imgs: ["images/q4.png"] }, // 1장으로 수정
+            { id: "q5", title: "Q5. 동작 속도가 너무 느림", symptom: "엔코더 펄스 설정 오류", steps: ["S102 설정값 확인 및 조정"], imgs: ["images/q5.png"] },
+            { id: "q6", title: "Q6. 동작 시 꿀렁거림 발생", symptom: "모터 극수 설정 오류", steps: ["S204, S207 설정값 확인"], imgs: ["images/q6.png"] },
+            { id: "q7", title: "Q7. 감속 없이 동작 / 안 열림", symptom: "벨트 텐션 부족", steps: ["도어 벨트 장력 확인 및 조절"], imgs: ["images/q7.png"] }, // 1장으로 수정
+            { id: "q8", title: "Q8. 자동상태에서 동작 안됨", symptom: "접점 신호 인식 불량", steps: ["DOL, DCL 신호 확인", "A/B접점 설정 확인", "COM COM 양단 점퍼작업으로 설정"], imgs: ["images/q8.png", "images/q8_2.png", "images/q8_3.png"] },
+            { id: "q9", title: "Q9. 끝까지 닫히거나 열리지 않음", symptom: "도어 부하 과다", steps: ["가이드 레일 이물질 확인", "S211 토크 보상 증가"], imgs: ["images/q9.png"] }, // 1장으로 수정
+            { id: "q10", title: "Q10. 열림 속도 조정 방법", symptom: "속도 변경 필요", steps: ["OP01 설정값 조정"], imgs: ["images/q10.png"] },
+            { id: "q11", title: "Q11. 닫힘 속도 조정 방법", symptom: "속도 변경 필요", steps: ["CP01 설정값 조정"], imgs: ["images/q11.png"] },
+            { id: "q12", title: "Q12. 화면 안나올 때", symptom: "전압 설정 오류(한사도어컨트롤에한함)", steps: ["엔코더 점퍼핀 5V 확인", "S102 조정"], imgs: ["images/q12.png", "images/q12_2.png", "images/q12_3.png"] },
+            {
+                id: "q13", title: "Q13. 도어 끝단 충격 발생", symptom: "감속 구간 부족", steps: ["CP03, OP03 수치 조정"], imgs: ["images/q13.png", "images/q13_2.png"]
+            },
+            { id: "q14", title: "Q14. 한사도어(HANSA) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q14.png", "images/q14_2.png", "images/q14_3.png"] },
+            { id: "q15", title: "Q15. 스타도어(STAR) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q15.png", "images/q15_2.png", "images/q15_3.png"] },
+            { id: "q16", title: "Q16. SM / 삼일제어반 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q16.png", "images/q16_2.png", "images/q16_3.png", "images/q16_4.png"] }
+        ];
+
+        let currentImgs = [];
+        let currentIdx = 0;
+
+        function renderList(items) {
+            const list = document.getElementById('questionList');
+            list.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.title;
+                li.onclick = () => showDetail(item, li);
+                list.appendChild(li);
+            });
+        }
+
+        function showDetail(item, el) {
+            document.querySelectorAll('#questionList li').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('detailView').classList.remove('hidden');
+            document.getElementById('title').textContent = item.title;
+            document.getElementById('symptomText').textContent = item.symptom;
+            document.getElementById('stepContainer').innerHTML = item.steps.map((s, i) => `<p>${i + 1}. ${s}</p>`).join('');
+
+            currentImgs = item.imgs || [];
+            currentIdx = 0;
+            updateUI();
+        }
+
+        function updateUI() {
+            const imgBox = document.getElementById('imgBox');
+            const counter = document.getElementById('imgCounter');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const detailBtn = document.getElementById('detailBtn');
+
+            imgBox.innerHTML = '';
+
+            if (currentImgs.length > 0) {
+                const img = document.createElement('img');
+                img.src = currentImgs[currentIdx];
+                imgBox.appendChild(img);
+                detailBtn.classList.remove('hidden');
+
+                // 로직 핵심: 배열 길이가 반드시 1보다 커야만 슬라이더를 활성화
+                if (currentImgs.length > 1) {
+                    prevBtn.style.display = "flex";
+                    nextBtn.style.display = "flex";
+                    counter.style.display = "block";
+                    counter.textContent = (currentIdx + 1) + " / " + currentImgs.length;
+                } else {
+                    prevBtn.style.display = "none";
+                    nextBtn.style.display = "none";
+                    counter.style.display = "none";
+                }
+            } else {
+                detailBtn.classList.add('hidden');
+                imgBox.innerHTML = "<p style='color:#ccc'>등록된 이미지가 없습니다.</p>";
+                prevBtn.style.display = "none";
+                nextBtn.style.display = "none";
+                counter.style.display = "none";
+            }
+        }
+
+        function changeSlide(dir) {
+            if (currentImgs.length <= 1) return;
+            currentIdx = (currentIdx + dir + currentImgs.length) % currentImgs.length;
+            updateUI();
+        }
+
+        function openModal() {
+            if (currentImgs.length > 0) {
+                document.getElementById('modalImg').src = currentImgs[currentIdx];
+                document.getElementById('modal').style.display = "flex";
+            }
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = "none"; }
+        window.addEventListener('keydown', (e) => { if (e.key === "Escape") closeModal(); });
+        document.getElementById('searchInput').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            renderList(manualData.filter(d => d.title.toLowerCase().includes(val)));
+        };
+        window.onload = () => renderList(manualData);
+    </script>
+</body>
+
+</html>
