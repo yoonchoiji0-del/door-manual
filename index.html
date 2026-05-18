@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도어컨트롤러 매뉴얼 v3.5</title>
+    <title>도어컨트롤러 매뉴얼 v3.6 (가로최적화)</title>
     <style>
         :root {
             --primary: #28a745;
@@ -23,53 +23,57 @@
         body {
             background: var(--bg);
             color: var(--text);
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
         header {
             background: #fff;
-            padding: 15px 30px;
+            padding: 15px 20px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         h1 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary);
             font-weight: 800;
         }
 
         #searchInput {
-            width: 300px;
-            padding: 10px 15px;
+            width: 180px;
+            padding: 8px 12px;
             border: 2px solid var(--border);
             border-radius: 8px;
             outline: none;
+            font-size: 0.9rem;
         }
 
         main {
             display: flex;
+            flex-direction: column;
             flex: 1;
-            overflow: hidden;
-            padding: 20px;
-            gap: 20px;
+            padding: 15px;
+            gap: 15px;
         }
 
         .sidebar {
-            width: 380px;
+            width: 100%;
             background: #fff;
             border-radius: 12px;
             border: 1px solid var(--border);
+            max-height: 250px;
             overflow-y: auto;
         }
 
         #questionList li {
-            padding: 18px;
+            padding: 15px;
             border-bottom: 1px solid var(--border);
             cursor: pointer;
             font-size: 0.95rem;
@@ -83,12 +87,11 @@
         }
 
         .content {
-            flex: 1;
+            width: 100%;
             background: #fff;
             border-radius: 12px;
-            padding: 30px;
+            padding: 20px;
             border: 1px solid var(--border);
-            overflow-y: auto;
         }
 
         .hidden {
@@ -113,8 +116,14 @@
             background: var(--primary);
         }
 
+        #stepContainer p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
         .image-panel {
-            width: 480px;
+            width: 100%;
             display: flex;
             flex-direction: column;
         }
@@ -122,7 +131,7 @@
         .slider-container {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 300px;
             background: #eee;
             border-radius: 12px;
             border: 1px solid var(--border);
@@ -153,8 +162,8 @@
             background: rgba(0, 0, 0, 0.6);
             color: white;
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             z-index: 10;
             border-radius: 50%;
@@ -164,33 +173,93 @@
         }
 
         .btn-prev {
-            left: 15px;
+            left: 10px;
         }
 
         .btn-next {
-            right: 15px;
+            right: 10px;
         }
 
         .img-counter {
             text-align: center;
-            margin-top: 10px;
-            font-size: 1rem;
+            margin-top: 8px;
+            font-size: 0.9rem;
             font-weight: bold;
             color: #444;
-            height: 1.2rem;
-            display: none;
         }
 
         .btn-detail {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: #343a40;
             color: #fff;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* 📱 가로 모드 또는 PC 화면 최적화 (가로가 더 길 때 작동) */
+        @media (min-width: 768px) or (orientation: landscape) {
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            header {
+                padding: 15px 30px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            #searchInput {
+                width: 300px;
+            }
+
+            main {
+                flex-direction: row;
+                overflow: hidden;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .sidebar {
+                width: 320px;
+                max-height: none;
+                height: 100%;
+            }
+
+            .content {
+                flex: 1;
+                height: 100%;
+                overflow-y: auto;
+            }
+
+            .image-panel {
+                width: 400px;
+                height: 100%;
+            }
+
+            .slider-container {
+                flex: 1;
+                height: auto;
+                min-height: 200px;
+            }
+        }
+
+        /* 대형화면(PC) 보정 */
+        @media (min-width: 1200px) {
+            .sidebar {
+                width: 380px;
+            }
+
+            .image-panel {
+                width: 480px;
+            }
         }
 
         #modal {
@@ -239,10 +308,10 @@
             <ul id="questionList"></ul>
         </aside>
         <section class="content">
-            <div id="emptyState" style="text-align:center; padding-top:150px; color:#999;">질문을 선택해 주세요.</div>
+            <div id="emptyState" style="text-align:center; padding-top:100px; color:#999;">질문을 선택해 주세요.</div>
             <div id="detailView" class="hidden">
-                <h2 id="title" style="margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:10px;"></h2>
-                <div style="margin-bottom:20px;"><span class="label symptom">발생 증상</span>
+                <h2 id="title" style="margin-bottom:15px; border-bottom:2px solid #eee; padding-bottom:10px;"></h2>
+                <div style="margin-bottom:15px;"><span class="label symptom">발생 증상</span>
                     <p id="symptomText"></p>
                 </div>
                 <div><span class="label step">조치 방법</span>
@@ -267,23 +336,21 @@
     </div>
 
     <script>
-        // 말씀하신 Q2, Q4, Q7, Q9의 이미지 배열을 1개로 수정했습니다.
+        // 현재 사진 위치에 맞게 'images/' 경로 유지 (필요 시 수정 가능)
         const manualData = [
             { id: "q1", title: "Q1. 도어폭 측정 방법", symptom: "도어 닫힘 상태에서 측정(CLS 점등)", steps: ["MODE 두번 -> CALI 이동", "ENTER -> 도어 열리며 숫자 증가", "완료 후 HAND 대기"], imgs: ["images/q1.png"] },
-            { id: "q2", title: "Q2. ER-14번 발생", symptom: "엔코더 역방향", steps: ["SW1 스위치 반대로 전환", "전원 재시작 필수"], imgs: ["images/q2.png"] }, // 1장으로 수정
+            { id: "q2", title: "Q2. ER-14번 발생", symptom: "엔코더 역방향", steps: ["SW1 스위치 반대로 전환", "전원 재시작 필수"], imgs: ["images/q2.png"] },
             { id: "q3", title: "Q3. 도어 안 움직임", symptom: "CLS LED 미점등", steps: ["센서 위치 및 결선 확인", "모터 상 확인"], imgs: ["images/q3.png", "images/q3_2.png", "images/q3_3.png", "images/q3_4.png"] },
-            { id: "q4", title: "Q4. 도어폭 측정 안됨 (ER-11)", symptom: "엔코더 신호 인식 불량", steps: ["렌치 볼트 조임 확인", "엔코더 부품 교체 검토"], imgs: ["images/q4.png"] }, // 1장으로 수정
+            { id: "q4", title: "Q4. 도어폭 측정 안됨 (ER-11)", symptom: "엔코더 신호 인식 불량", steps: ["렌치 볼트 조임 확인", "엔코더 부품 교체 검토"], imgs: ["images/q4.png"] },
             { id: "q5", title: "Q5. 동작 속도가 너무 느림", symptom: "엔코더 펄스 설정 오류", steps: ["S102 설정값 확인 및 조정"], imgs: ["images/q5.png"] },
             { id: "q6", title: "Q6. 동작 시 꿀렁거림 발생", symptom: "모터 극수 설정 오류", steps: ["S204, S207 설정값 확인"], imgs: ["images/q6.png"] },
-            { id: "q7", title: "Q7. 감속 없이 동작 / 안 열림", symptom: "벨트 텐션 부족", steps: ["도어 벨트 장력 확인 및 조절"], imgs: ["images/q7.png"] }, // 1장으로 수정
+            { id: "q7", title: "Q7. 감속 없이 동작 / 안 열림", symptom: "벨트 텐션 부족", steps: ["도어 벨트 장력 확인 및 조절"], imgs: ["images/q7.png"] },
             { id: "q8", title: "Q8. 자동상태에서 동작 안됨", symptom: "접점 신호 인식 불량", steps: ["DOL, DCL 신호 확인", "A/B접점 설정 확인", "COM COM 양단 점퍼작업으로 설정"], imgs: ["images/q8.png", "images/q8_2.png", "images/q8_3.png"] },
-            { id: "q9", title: "Q9. 끝까지 닫히거나 열리지 않음", symptom: "도어 부하 과다", steps: ["가이드 레일 이물질 확인", "S211 토크 보상 증가"], imgs: ["images/q9.png"] }, // 1장으로 수정
+            { id: "q9", title: "Q9. 끝까지 닫히거나 열리지 않음", symptom: "도어 부하 과다", steps: ["가이드 레일 이물질 확인", "S211 토크 보상 증가"], imgs: ["images/q9.png"] },
             { id: "q10", title: "Q10. 열림 속도 조정 방법", symptom: "속도 변경 필요", steps: ["OP01 설정값 조정"], imgs: ["images/q10.png"] },
             { id: "q11", title: "Q11. 닫힘 속도 조정 방법", symptom: "속도 변경 필요", steps: ["CP01 설정값 조정"], imgs: ["images/q11.png"] },
             { id: "q12", title: "Q12. 화면 안나올 때", symptom: "전압 설정 오류(한사도어컨트롤에한함)", steps: ["엔코더 점퍼핀 5V 확인", "S102 조정"], imgs: ["images/q12.png", "images/q12_2.png", "images/q12_3.png"] },
-            {
-                id: "q13", title: "Q13. 도어 끝단 충격 발생", symptom: "감속 구간 부족", steps: ["CP03, OP03 수치 조정"], imgs: ["images/q13.png", "images/q13_2.png"]
-            },
+            { id: "q13", title: "Q13. 도어 끝단 충격 발생", symptom: "감속 구간 부족", steps: ["CP03, OP03 수치 조정"], imgs: ["images/q13.png", "images/q13_2.png"] },
             { id: "q14", title: "Q14. 한사도어(HANSA) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q14.png", "images/q14_2.png", "images/q14_3.png"] },
             { id: "q15", title: "Q15. 스타도어(STAR) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q15.png", "images/q15_2.png", "images/q15_3.png"] },
             { id: "q16", title: "Q16. SM / 삼일제어반 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q16.png", "images/q16_2.png", "images/q16_3.png", "images/q16_4.png"] }
@@ -332,7 +399,6 @@
                 imgBox.appendChild(img);
                 detailBtn.classList.remove('hidden');
 
-                // 로직 핵심: 배열 길이가 반드시 1보다 커야만 슬라이더를 활성화
                 if (currentImgs.length > 1) {
                     prevBtn.style.display = "flex";
                     nextBtn.style.display = "flex";
