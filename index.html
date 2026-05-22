@@ -68,8 +68,41 @@
             background: #fff;
             border-radius: 8px;
             border: 1px solid var(--border);
-            max-height: 160px;
+            max-height: 240px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+        }
+
+        .sidebar-tab {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #6c757d;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .sidebar-tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background: #e8f5e940;
+        }
+
+        #questionList {
+            flex: 1;
             overflow-y: auto;
+            list-style: none;
         }
 
         #questionList li {
@@ -108,8 +141,13 @@
             font-weight: bold;
         }
 
-        .label.symptom { background: #6c757d; }
-        .label.step { background: var(--primary); }
+        .label.symptom {
+            background: #6c757d;
+        }
+
+        .label.step {
+            background: var(--primary);
+        }
 
         #title {
             font-size: 1.1rem;
@@ -182,8 +220,13 @@
             font-size: 0.8rem;
         }
 
-        .btn-prev { left: 8px; }
-        .btn-next { right: 8px; }
+        .btn-prev {
+            left: 8px;
+        }
+
+        .btn-next {
+            right: 8px;
+        }
 
         .img-counter {
             text-align: center;
@@ -210,50 +253,99 @@
                 height: 100vh;
                 overflow: hidden;
             }
+
             header {
                 padding: 5px 15px;
             }
+
             main {
                 flex-direction: row;
                 overflow: hidden;
                 padding: 8px;
                 gap: 8px;
             }
+
             .sidebar {
                 width: 25%;
                 max-height: none;
                 height: 100%;
             }
+
             .content {
                 width: 40%;
                 height: 100%;
                 overflow-y: auto;
                 padding: 12px;
             }
+
             .image-panel {
                 width: 35%;
                 height: 100%;
                 gap: 3px;
             }
+
             .slider-container {
                 flex: 1;
                 height: auto;
             }
-            #title { font-size: 1rem; margin-bottom: 8px; }
-            #searchInput { width: 160px; }
-            .btn-detail { padding: 6px; font-size: 0.85rem; }
+
+            #title {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+
+            #searchInput {
+                width: 160px;
+            }
+
+            .btn-detail {
+                padding: 6px;
+                font-size: 0.85rem;
+            }
         }
 
         /* 💻 데스크톱 PC 전용 레이아웃 분리 */
         @media (min-width: 1024px) {
-            body { height: 100vh; overflow: hidden; }
-            main { flex-direction: row; padding: 20px; gap: 20px; }
-            .sidebar { width: 320px; max-height: none; height: 100%; }
-            .content { flex: 1; height: 100%; overflow-y: auto; padding: 25px; }
-            .image-panel { width: 420px; height: 100%; }
-            .slider-container { height: 350px; }
-            #title { font-size: 1.3rem; }
-            #searchInput { width: 250px; }
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            main {
+                flex-direction: row;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .sidebar {
+                width: 320px;
+                max-height: none;
+                height: 100%;
+            }
+
+            .content {
+                flex: 1;
+                height: 100%;
+                overflow-y: auto;
+                padding: 25px;
+            }
+
+            .image-panel {
+                width: 420px;
+                height: 100%;
+            }
+
+            .slider-container {
+                height: 350px;
+            }
+
+            #title {
+                font-size: 1.3rem;
+            }
+
+            #searchInput {
+                width: 250px;
+            }
         }
 
         #modal {
@@ -262,23 +354,102 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 10000;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            touch-action: none;
         }
 
-        #modal img {
-            max-width: 98%;
-            max-height: 85%;
+        .modal-viewport {
+            position: relative;
+            width: 100%;
+            height: 80%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .modal-viewport:active {
+            cursor: grabbing;
+        }
+
+        #modalImg {
+            max-width: 95%;
+            max-height: 95%;
             object-fit: contain;
+            transition: transform 0.08s ease-out;
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        .zoom-toolbar {
+            position: absolute;
+            bottom: 85px;
+            display: flex;
+            gap: 12px;
+            z-index: 10002;
+        }
+
+        .zoom-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: background 0.2s, transform 0.1s;
+            user-select: none;
+        }
+
+        .zoom-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .zoom-btn:active {
+            background: var(--primary);
+            transform: scale(0.95);
+        }
+
+        .btn-close-top {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 10003;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .btn-close-top:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .btn-close {
-            margin-top: 15px;
-            padding: 10px 50px;
+            position: absolute;
+            bottom: 25px;
+            padding: 10px 40px;
             background: var(--primary);
             color: white;
             border: none;
@@ -286,6 +457,12 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
+            z-index: 10002;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-close:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -299,10 +476,15 @@
 
     <main>
         <aside class="sidebar">
+            <div class="sidebar-tabs">
+                <div class="sidebar-tab active" id="tabSetup" onclick="switchTab('setup')">설치·운영 매뉴얼</div>
+                <div class="sidebar-tab" id="tabError" onclick="switchTab('error')">에러 시 조치사항</div>
+            </div>
             <ul id="questionList"></ul>
         </aside>
         <section class="content">
-            <div id="emptyState" style="text-align:center; padding-top:40px; color:#999; font-size:0.9rem;">에러 및 질문을 선택해 주세요.</div>
+            <div id="emptyState" style="text-align:center; padding-top:40px; color:#999; font-size:0.9rem;">에러 및 질문을 선택해
+                주세요.</div>
             <div id="detailView" class="hidden">
                 <h2 id="title"></h2>
                 <div style="margin-bottom:10px;"><span class="label symptom">발생 증상</span>
@@ -324,33 +506,42 @@
         </aside>
     </main>
 
-    <div id="modal" onclick="closeModal()">
-        <img id="modalImg" src="" onclick="event.stopPropagation()">
+    <div id="modal">
+        <button class="btn-close-top" onclick="closeModal()">×</button>
+        <div class="modal-viewport" id="modalViewport">
+            <img id="modalImg" src="" draggable="false">
+        </div>
+        <div class="zoom-toolbar">
+            <button class="zoom-btn" onclick="zoomIn()">+</button>
+            <button class="zoom-btn" onclick="zoomOut()">-</button>
+            <button class="zoom-btn" onclick="resetZoom()">1:1</button>
+        </div>
         <button class="btn-close" onclick="closeModal()">닫기</button>
     </div>
 
     <script>
         const manualData = [
-            { id: "q1", title: "Q1. 도어폭 측정 방법", symptom: "도어 닫힘 상태에서 측정(CLS 점등)", steps: ["MODE 두번 -> CALI 이동", "ENTER -> 도어 열리며 숫자 증가", "완료 후 HAND 대기"], imgs: ["images/q1.png"] },
-            { id: "q2", title: "Q2. ER-14번 발생", symptom: "엔코더 역방향", steps: ["SW1 스위치 반대로 전환", "전원 재시작 필수"], imgs: ["images/q2.png"] },
-            { id: "q3", title: "Q3. 도어 안 움직임", symptom: "CLS LED 미점등", steps: ["센서 위치 및 결선 확인", "모터 상 확인"], imgs: ["images/q3.png", "images/q3_2.png", "images/q3_3.png", "images/q3_4.png"] },
-            { id: "q4", title: "Q4. 도어폭 측정 안됨 (ER-11)", symptom: "엔코더 신호 인식 불량", steps: ["렌치 볼트 조임 확인", "엔코더 부품 교체 검토"], imgs: ["images/q4.png"] },
-            { id: "q5", title: "Q5. 동작 속도가 너무 느림", symptom: "엔코더 펄스 설정 오류", steps: ["S102 설정값 확인 및 조정"], imgs: ["images/q5.png"] },
-            { id: "q6", title: "Q6. 동작 시 꿀렁거림 발생", symptom: "모터 극수 설정 오류", steps: ["S204, S207 설정값 확인"], imgs: ["images/q6.png"] },
-            { id: "q7", title: "Q7. 감속 없이 동작 / 안 열림", symptom: "벨트 텐션 부족", steps: ["도어 벨트 장력 확인 및 조절"], imgs: ["images/q7.png"] },
-            { id: "q8", title: "Q8. 자동상태에서 동작 안됨", symptom: "접점 신호 인식 불량", steps: ["DOL, DCL 신호 확인", "A/B접점 설정 확인", "COM COM 양단 점퍼작업으로 설정"], imgs: ["images/q8.png", "images/q8_2.png", "images/q8_3.png"] },
-            { id: "q9", title: "Q9. 끝까지 닫히거나 열리지 않음", symptom: "도어 부하 과다", steps: ["가이드 레일 이물질 확인", "S211 토크 보상 증가"], imgs: ["images/q9.png"] },
-            { id: "q10", title: "Q10. 열림 속도 조정 방법", symptom: "속도 변경 필요", steps: ["OP01 설정값 조정"], imgs: ["images/q10.png"] },
-            { id: "q11", title: "Q11. 닫힘 속도 조정 방법", symptom: "속도 변경 필요", steps: ["CP01 설정값 조정"], imgs: ["images/q11.png"] },
-            { id: "q12", title: "Q12. 화면 안나올 때", symptom: "전압 설정 오류(한사도어컨트롤에한함)", steps: ["엔코더 점퍼핀 5V 확인", "S102 조정"], imgs: ["images/q12.png", "images/q12_2.png", "images/q12_3.png"] },
-            { id: "q13", title: "Q13. 도어 끝단 충격 발생", symptom: "감속 구간 부족", steps: ["CP03, OP03 수치 조정"], imgs: ["images/q13.png", "images/q13_2.png"] },
-            { id: "q14", title: "Q14. 한사도어(HANSA) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q14.png", "images/q14_2.png"] },
-            { id: "q15", title: "Q15. 스타도어(STAR) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q15.png", "images/q15_2.png"] },
-            { id: "q16", title: "Q16. SM / 삼일제어반 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q16.png", "images/q16_2.png"] }
+            { id: "q1", category: "setup", title: "Q1. 도어폭 측정 방법", symptom: "도어 닫힘 상태에서 측정(CLS 점등)", steps: ["MODE 두번 -> CALI 이동", "ENTER -> 도어 열리며 숫자 증가", "완료 후 HAND 대기"], imgs: ["images/q1.png"] },
+            { id: "q2", category: "error", title: "Q2. ER-14번 발생", symptom: "엔코더 역방향", steps: ["SW1 스위치 반대로 전환", "전원 재시작 필수"], imgs: ["images/q2.png"] },
+            { id: "q3", category: "error", title: "Q3. 도어 안 움직임", symptom: "CLS LED 미점등", steps: ["센서 위치 및 결선 확인", "모터 상 확인"], imgs: ["images/q3.png", "images/q3_2.png", "images/q3_3.png", "images/q3_4.png"] },
+            { id: "q4", category: "error", title: "Q4. 도어폭 측정 안됨 (ER-11)", symptom: "엔코더 신호 인식 불량", steps: ["렌치 볼트 조임 확인", "엔코더 부품 교체 검토"], imgs: ["images/q4.png"] },
+            { id: "q5", category: "error", title: "Q5. 동작 속도가 너무 느림", symptom: "엔코더 펄스 설정 오류", steps: ["S102 설정값 확인 및 조정"], imgs: ["images/q5.png"] },
+            { id: "q6", category: "error", title: "Q6. 동작 시 꿀렁거림 발생", symptom: "모터 극수 설정 오류", steps: ["S204, S207 설정값 확인"], imgs: ["images/q6.png"] },
+            { id: "q7", category: "error", title: "Q7. 감속 없이 동작 / 안 열림", symptom: "벨트 텐션 부족", steps: ["도어 벨트 장력 확인 및 조절"], imgs: ["images/q7.png"] },
+            { id: "q8", category: "error", title: "Q8. 자동상태에서 동작 안됨", symptom: "접점 신호 인식 불량", steps: ["DOL, DCL 신호 확인", "A/B접점 설정 확인", "COM COM 양단 점퍼작업으로 설정"], imgs: ["images/q8.png", "images/q8_2.png", "images/q8_3.png"] },
+            { id: "q9", category: "error", title: "Q9. 끝까지 닫히거나 열리지 않음", symptom: "도어 부하 과다", steps: ["가이드 레일 이물질 확인", "S211 토크 보상 증가"], imgs: ["images/q9.png"] },
+            { id: "q10", category: "setup", title: "Q10. 열림 속도 조정 방법", symptom: "속도 변경 필요", steps: ["OP01 설정값 조정"], imgs: ["images/q10.png"] },
+            { id: "q11", category: "setup", title: "Q11. 닫힘 속도 조정 방법", symptom: "속도 변경 필요", steps: ["CP01 설정값 조정"], imgs: ["images/q11.png"] },
+            { id: "q12", category: "error", title: "Q12. 화면 안나올 때", symptom: "전압 설정 오류(한사도어컨트롤에한함)", steps: ["엔코더 점퍼핀 5V 확인", "S102 조정"], imgs: ["images/q12.png", "images/q12_2.png", "images/q12_3.png"] },
+            { id: "q13", category: "error", title: "Q13. 도어 끝단 충격 발생", symptom: "감속 구간 부족", steps: ["CP03, OP03 수치 조정"], imgs: ["images/q13.png", "images/q13_2.png"] },
+            { id: "q14", category: "setup", title: "Q14. 한사도어(HANSA) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q14.png", "images/q14_2.png"] },
+            { id: "q15", category: "setup", title: "Q15. 스타도어(STAR) 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q15.png", "images/q15_2.png"] },
+            { id: "q16", category: "setup", title: "Q16. SM / 삼일제어반 결선도", symptom: "결선도 확인", steps: ["도면 참고하여 배선"], imgs: ["images/q16.png", "images/q16_2.png"] }
         ];
 
         let currentImgs = [];
         let currentIdx = 0;
+        let activeCategory = "setup";
 
         function renderList(items) {
             const list = document.getElementById('questionList');
@@ -361,6 +552,37 @@
                 li.onclick = () => showDetail(item, li);
                 list.appendChild(li);
             });
+        }
+
+        function getFilteredData() {
+            const val = document.getElementById('searchInput').value.toLowerCase();
+            return manualData.filter(d => {
+                const matchCategory = d.category === activeCategory;
+                const matchSearch = d.title.toLowerCase().includes(val) || d.symptom.toLowerCase().includes(val);
+                return matchCategory && matchSearch;
+            });
+        }
+
+        function switchTab(category) {
+            activeCategory = category;
+            document.getElementById('tabSetup').classList.toggle('active', category === 'setup');
+            document.getElementById('tabError').classList.toggle('active', category === 'error');
+            
+            const filtered = getFilteredData();
+            renderList(filtered);
+            
+            if (filtered.length > 0) {
+                const listItems = document.getElementById('questionList').children;
+                if (listItems.length > 0) {
+                    showDetail(filtered[0], listItems[0]);
+                }
+            } else {
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('detailView').classList.add('hidden');
+                currentImgs = [];
+                currentIdx = 0;
+                updateUI();
+            }
         }
 
         function showDetail(item, el) {
@@ -417,20 +639,159 @@
             updateUI();
         }
 
+        // --- 🔍 Advanced Image Zoom Viewer Logic (Mobile Pinch-to-zoom + Desktop Mouse Wheel/Drag) ---
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        let initialPinchDistance = 0;
+        let initialScale = 1;
+        let lastTap = 0;
+
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modalImg');
+        const modalViewport = document.getElementById('modalViewport');
+
         function openModal() {
             if (currentImgs.length > 0) {
-                document.getElementById('modalImg').src = currentImgs[currentIdx];
-                document.getElementById('modal').style.display = "flex";
+                modalImg.src = currentImgs[currentIdx];
+                modal.style.display = "flex";
+                document.body.style.overflow = "hidden"; // Prevent body scroll
+                resetZoom();
             }
         }
 
-        function closeModal() { document.getElementById('modal').style.display = "none"; }
-        window.addEventListener('keydown', (e) => { if (e.key === "Escape") closeModal(); });
+        function closeModal() {
+            modal.style.display = "none";
+            document.body.style.overflow = ""; // Re-enable body scroll
+        }
+
+        function applyTransform() {
+            const maxTranslate = 1000 * scale;
+            translateX = Math.max(-maxTranslate, Math.min(maxTranslate, translateX));
+            translateY = Math.max(-maxTranslate, Math.min(maxTranslate, translateY));
+            
+            modalImg.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+        }
+
+        function resetZoom() {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            applyTransform();
+        }
+
+        function zoomIn() {
+            scale = Math.min(6, scale + 0.25);
+            applyTransform();
+        }
+
+        function zoomOut() {
+            scale = Math.max(0.5, scale - 0.25);
+            applyTransform();
+        }
+
+        function getDistance(t1, t2) {
+            return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+        }
+
+        // --- 🖱️ Desktop Mouse Events ---
+        modalViewport.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            applyTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        modalViewport.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        modalViewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = 0.1;
+            if (e.deltaY < 0) {
+                scale = Math.min(6, scale + zoomFactor);
+            } else {
+                scale = Math.max(0.5, scale - zoomFactor);
+            }
+            applyTransform();
+        }, { passive: false });
+
+        // --- 📱 Touch Events for Mobile (Pinch-to-zoom + Drag) ---
+        modalViewport.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                const touch = e.touches[0];
+                startX = touch.clientX - translateX;
+                startY = touch.clientY - translateY;
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                initialPinchDistance = getDistance(e.touches[0], e.touches[1]);
+                initialScale = scale;
+            }
+        }, { passive: true });
+
+        modalViewport.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1 && isDragging) {
+                const touch = e.touches[0];
+                translateX = touch.clientX - startX;
+                translateY = touch.clientY - startY;
+                applyTransform();
+            } else if (e.touches.length === 2) {
+                const dist = getDistance(e.touches[0], e.touches[1]);
+                if (initialPinchDistance > 0) {
+                    scale = Math.max(0.5, Math.min(6, initialScale * (dist / initialPinchDistance)));
+                    applyTransform();
+                }
+            }
+        }, { passive: true });
+
+        modalViewport.addEventListener('touchend', (e) => {
+            isDragging = false;
+            initialPinchDistance = 0;
+            
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0) {
+                if (scale > 1) {
+                    resetZoom();
+                } else {
+                    scale = 2.5;
+                    applyTransform();
+                }
+                e.preventDefault();
+            }
+            lastTap = currentTime;
+        }, { passive: false });
+
+        window.addEventListener('keydown', (e) => { 
+            if (e.key === "Escape") closeModal(); 
+        });
+
         document.getElementById('searchInput').oninput = (e) => {
-            const val = e.target.value.toLowerCase();
-            renderList(manualData.filter(d => d.title.toLowerCase().includes(val)));
+            const filtered = getFilteredData();
+            renderList(filtered);
         };
-        window.onload = () => renderList(manualData);
+
+        window.onload = () => {
+            switchTab('setup');
+        };
     </script>
 </body>
 
